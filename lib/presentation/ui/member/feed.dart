@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:darky_app/presentation/widgets/alert_dialog.dart';
 import 'package:darky_app/services/database_service.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,7 @@ class NewsFeedPage extends StatefulWidget {
 
 class _NewsFeedPageState extends State<NewsFeedPage> {
   ScrollController scrollController = ScrollController();
+  ScrollController _feedListController = ScrollController();
   Databloc<Post> postsDataBloc;
   CollectionReference cr = FirebaseFirestore.instance.collection('feed');
   List news;
@@ -166,6 +168,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                                       snap.connectionState ==
                                           ConnectionState.active) {
                                     return ListView.builder(
+                                      controller: _feedListController,
                                       shrinkWrap: true,
                                       itemBuilder: (_, i) {
                                         return Container(
@@ -187,13 +190,28 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                                                         icon: Icon(Icons.delete,
                                                             color: Colors.red),
                                                         onPressed: () {
-                                                          setState(() {
-                                                            DatabaseService.deletePost(
-                                                                title:
-                                                                    dataObjects[
-                                                                            i]
-                                                                        .title);
-                                                          });
+                                                          showDialog(
+                                                              context:
+                                                                  (context),
+                                                              builder: (_) =>
+                                                                  YesNoAlert(
+                                                                    content:
+                                                                        'Are you sure you want to delete this post?',
+                                                                    title:
+                                                                        'Warning',
+                                                                    onNo: () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    onYes: () {
+                                                                      setState(
+                                                                          () {
+                                                                        DatabaseService.deletePost(
+                                                                            title:
+                                                                                dataObjects[i].title);
+                                                                      });
+                                                                    },
+                                                                  ));
                                                         })
                                                   ],
                                                 ),

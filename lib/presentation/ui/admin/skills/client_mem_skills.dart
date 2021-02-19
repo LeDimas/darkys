@@ -21,6 +21,7 @@ class ClientMemberSkill extends StatefulWidget {
 }
 
 class _ClientMemberSkillState extends State<ClientMemberSkill> {
+  ScrollController _controller = ScrollController();
   @override
   void initState() {
     sectionFilter = widget.sections.first;
@@ -103,7 +104,7 @@ class _ClientMemberSkillState extends State<ClientMemberSkill> {
                           if (snap.hasData &&
                               snap.connectionState == ConnectionState.active) {
                             var dataBundle = snap.data as List;
-                            print(dataBundle);
+                            // print(dataBundle);
 
                             var memMoves = dataBundle.first as List<Map>;
                             Set<int> temp = Set();
@@ -131,24 +132,30 @@ class _ClientMemberSkillState extends State<ClientMemberSkill> {
 
                             var tierList = temp.toList()
                               ..sort((a, b) => a.compareTo(b));
-                            print(tierList);
+                            // print(tierList);
 
                             return Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
                                 child: ListView.builder(
+                                  physics: ScrollPhysics(),
+                                  controller: _controller,
                                   shrinkWrap: true,
                                   itemBuilder: (_, tier) {
                                     return Column(
                                       children: [
-                                        Text(
-                                          "tier ${tierList[tier].toString()}",
-                                          style: TextStyle(
-                                              fontSize: 24,
-                                              color: Colors.yellow),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            "Tier ${tierList[tier].toString()}",
+                                            style: TextStyle(
+                                                fontSize: 24,
+                                                color: Colors.yellow),
+                                          ),
                                         ),
                                         tier <= memtier
                                             ? GridView.builder(
+                                                physics: ScrollPhysics(),
                                                 shrinkWrap: true,
                                                 itemCount: sectionTypes.length,
                                                 gridDelegate:
@@ -235,6 +242,7 @@ class _ClientMemberSkillState extends State<ClientMemberSkill> {
                                                       );
                                                 })
                                             : GridView.builder(
+                                                physics: ScrollPhysics(),
                                                 shrinkWrap: true,
                                                 itemCount: sectionTypes.length,
                                                 gridDelegate:
@@ -249,7 +257,7 @@ class _ClientMemberSkillState extends State<ClientMemberSkill> {
                                                 },
                                               ),
                                         SizedBox(
-                                          height: 150,
+                                          height: 50,
                                         )
                                       ],
                                     );

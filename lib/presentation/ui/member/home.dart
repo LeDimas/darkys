@@ -41,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _hwController = TextEditingController();
   int unreadMessages = 0;
   String firstDateOfWeek;
+  ScrollController _scrollController = ScrollController();
   String lastDateOfWeek;
   List sections = [];
   static const Map<String, String> dayLookup = {
@@ -302,7 +303,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ],
                                   ),
-                                  _generateSchedule(),
+                                  _generateSchedule(_scrollController),
                                   SizedBox(
                                     height: 30,
                                   ),
@@ -424,7 +425,7 @@ class _HomePageState extends State<HomePage> {
             context.read(authenticationServiceProvider).currentUserEmail));
   }
 
-  Widget _generateSchedule() {
+  Widget _generateSchedule(ScrollController scrollController) {
     return FutureBuilder(
       builder: (_, snap) {
         Stream streamOfMySchedule;
@@ -483,6 +484,7 @@ class _HomePageState extends State<HomePage> {
                 });
 
                 return ListView.builder(
+                  controller: scrollController,
                   shrinkWrap: true,
                   itemBuilder: (_, i) {
                     var sections = scheduleMap[days[i]].keys.toList();
@@ -584,61 +586,92 @@ class _HomePageState extends State<HomePage> {
                                               );
                                             }),
                                       )
-                                    : Column(
-                                        children: [
-                                          TextField(
-                                              controller: _hwController,
-                                              decoration: InputDecoration(
-                                                  fillColor: Colors.white,
-                                                  filled: true,
-                                                  hintText: "type",
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: Colors
-                                                                  .deepPurple,
-                                                              width: 3)),
-                                                  enabledBorder:
-                                                      OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                      .lightBlue,
-                                                                  width: 3)))),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              RaisedButton(
-                                                onPressed: () {
-                                                  DatabaseService
-                                                      .addScheduledHomework(
-                                                          day: days[i],
-                                                          section:
-                                                              sections[index],
-                                                          info: _hwController
-                                                              .text,
-                                                          date: date,
-                                                          notify: notify);
+                                    : Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: RaisedButton(
+                                          onPressed: () {
+                                            showDialog(
+                                                context: (context),
+                                                builder: (_) => AlertDialog(
+                                                      insetPadding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 175),
+                                                      actions: [
+                                                        FlatButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child:
+                                                                Text("Cancel")),
+                                                        FlatButton(
+                                                          onPressed: () {
+                                                            DatabaseService
+                                                                .addScheduledHomework(
+                                                                    day:
+                                                                        days[i],
+                                                                    section:
+                                                                        sections[
+                                                                            index],
+                                                                    info: _hwController
+                                                                        .text,
+                                                                    date: date,
+                                                                    notify:
+                                                                        notify);
 
-                                                  _hwController.clear();
-                                                },
-                                                color: Colors.deepOrange[100],
-                                                child: Text(
-                                                  'Add collective homework?',
-                                                  style:
-                                                      TextStyle(fontSize: 10),
-                                                ),
-                                              ),
-                                              Checkbox(
-                                                  value: notify,
-                                                  onChanged: (val) {
-                                                    notify = val;
-                                                  }),
-                                              Text("notify?")
-                                            ],
-                                          ),
-                                        ],
+                                                            _hwController
+                                                                .clear();
+                                                          },
+                                                          child:
+                                                              Text("Publish"),
+                                                        ),
+                                                      ],
+                                                      content: Column(
+                                                        children: [
+                                                          TextField(
+                                                              maxLines: 3,
+                                                              controller:
+                                                                  _hwController,
+                                                              decoration: InputDecoration(
+                                                                  fillColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  filled: true,
+                                                                  hintText:
+                                                                      "type",
+                                                                  focusedBorder: OutlineInputBorder(
+                                                                      borderSide: BorderSide(
+                                                                          color: Colors
+                                                                              .deepPurple,
+                                                                          width:
+                                                                              3)),
+                                                                  enabledBorder: OutlineInputBorder(
+                                                                      borderSide: BorderSide(
+                                                                          color: Colors
+                                                                              .lightBlue,
+                                                                          width:
+                                                                              3)))),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Checkbox(
+                                                                  value: notify,
+                                                                  onChanged:
+                                                                      (val) {
+                                                                    notify =
+                                                                        val;
+                                                                  }),
+                                                              Text("notify?")
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ));
+                                          },
+                                          child: Text("Set Homework"),
+                                        ),
                                       )
                               ],
                             ),

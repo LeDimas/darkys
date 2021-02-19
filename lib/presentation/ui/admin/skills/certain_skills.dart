@@ -23,18 +23,17 @@ class CertainSkills extends StatefulWidget {
 class _CertainSkillsState extends State<CertainSkills> {
   Map<String, dynamic> progressMapNameProgress = {};
   Map<String, bool> learnedMapNameLearned = {};
+  ScrollController _scrollController = ScrollController();
   bool changesMade = false;
 
   @override
   void initState() {
-    if (widget.role != 'member') {
-      widget.moves.forEach((move) {
-        progressMapNameProgress['${move['moveName']}'] =
-            // ignore: unnecessary_cast
-            move['progress'];
-        learnedMapNameLearned['${move['moveName']}'] = move['learned'];
-      });
-    }
+    widget.moves.forEach((move) {
+      progressMapNameProgress['${move['moveName']}'] =
+          // ignore: unnecessary_cast
+          move['progress'];
+      learnedMapNameLearned['${move['moveName']}'] = move['learned'];
+    });
 
     super.initState();
   }
@@ -82,6 +81,7 @@ class _CertainSkillsState extends State<CertainSkills> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 50, horizontal: 60),
                 child: ListView.builder(
+                  controller: _scrollController,
                   itemBuilder: (_, i) {
                     return Container(
                       child: Column(

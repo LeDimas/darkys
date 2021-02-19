@@ -82,9 +82,10 @@ class DatabaseService {
         .where((e) {
           var hwTimeStamp = e.data()['date'] as Timestamp;
           var hwDate = hwTimeStamp.toDate();
-          if (hwDate.difference(date).inHours < 24 && e.data()['day'] == day)
+          if (date.difference(hwDate).inHours < 24 && e.data()['day'] == day) {
+            print(date.difference(hwDate));
             return true;
-          else
+          } else
             return false;
         })
         .map((e) => e.data()['info'])

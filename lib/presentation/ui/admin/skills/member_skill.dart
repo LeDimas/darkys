@@ -26,6 +26,7 @@ class _MemberSkillState extends State<MemberSkill> {
     super.initState();
   }
 
+  ScrollController _controller = ScrollController();
   String sectionFilter;
   @override
   Widget build(BuildContext context) {
@@ -129,6 +130,7 @@ class _MemberSkillState extends State<MemberSkill> {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
                                 child: ListView.builder(
+                                  controller: _controller,
                                   shrinkWrap: true,
                                   itemBuilder: (_, tier) {
                                     return Column(
